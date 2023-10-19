@@ -4,4 +4,4 @@ from . import main
 
 @main.route('/')
 def welcome():
-    return render_template('base.html')
+    return render_template('main/welcome.html')
