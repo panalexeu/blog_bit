@@ -3,3 +3,7 @@
 {% block page_header %}
     Welcome!
 {% endblock %}
+
+{% block page_content %}
+    How are you doing, {% if current_user.is_authenticated %} {{ current_user.username }} {% else %} stranger {% endif %}?
+{% endblock %}
