@@ -1,6 +1,6 @@
 import os
 
-basedir = os.path.abspath(__file__)  # path to config file directory
+basedir = os.path.dirname(__file__)  # path to config file directory
 
 
 class Config:
