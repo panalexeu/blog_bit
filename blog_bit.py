@@ -1,7 +1,7 @@
 import os
 
 from flask_migrate import Migrate
-from app import create_app, db
+from app import create_app, db, login_manager
 from app.models import User
 
 

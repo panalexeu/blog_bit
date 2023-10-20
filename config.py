@@ -4,9 +4,7 @@ basedir = os.path.dirname(__file__)  # path to config file directory
 
 
 class Config:
-    # Secret key for wtforms
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'alexeu 2000004'
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
