@@ -30,17 +30,9 @@
     </div>
 {% endblock %}
 
-{% block content %}
-    <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-        <div class="page-header">
-            <h1>{% block page_header %}{% endblock %}</h1>
-        </div>
-        {% block page_content %}{% endblock %}
-    </div>
-{% endblock %}
+<h2>Welcome to blog_bit!</h2>
+To confirm your account please click on the following link:
+{{ url_for('auth.confirm', token=token, _external=True) }}
+Sincerely,
+The Flasky Team
+Note: replies to this email address are not monitored.

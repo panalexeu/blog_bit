@@ -4,6 +4,7 @@ import flask_login
 from . import auth
 from .forms import LoginForm, RegistrationForm
 from .. import db
+from ..email import send_email
 from ..models import User
 
 
@@ -30,6 +31,14 @@ def login():
     return flask.render_template('auth/login.html', form=form)
 
 
+@auth.route('/logout')
+@flask_login.login_required
+def logout():
+    flask_login.logout_user()
+    flask.flash('You have been logged out.')
+    return flask.redirect(flask.url_for('main.welcome'))
+
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -44,16 +53,57 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        flask.flash('Registration finished. You can now login.')
+        # Confirmation token generation and email sending
+        token = user.generate_confirmation_token()
+        send_email(user.email, 'Confirm your account', 'confirm', username=user.username, token=token)
+        flask.flash('A confirmation email has been sent to you by email.')
 
         return flask.redirect(flask.url_for('auth.login'))
 
     return flask.render_template('auth/register.html', form=form)
 
 
-@auth.route('/logout')
+@auth.route('/confirm/<token>')
 @flask_login.login_required
-def logout():
-    flask_login.logout_user()
-    flask.flash('You have been logged out.')
+def confirm(token):
+    if flask_login.current_user.confirmed:
+        return flask.redirect(flask.url_for('main.welcome'))
+    elif flask_login.current_user.confirm(token, expiration=3600):  # expiration is set in seconds 3600 = 1 hour
+        flask.flash('You have confirmed your account. Thanks!')
+    else:
+        flask.flash('The confirmation link is invalid or has expired.')
+
     return flask.redirect(flask.url_for('main.welcome'))
+
+
+@auth.route('/reconfirm')
+@flask_login.login_required
+def reconfirm():
+    current_user = flask_login.current_user
+
+    token = current_user.generate_confirmation_token()
+    send_email(current_user.email, 'Confirm your account', 'confirm', username=current_user.username, token=token)
+    flask.flash('A new confirmation email has been sent to you by email.')
+
+    return flask.redirect(flask.url_for('main.welcome'))
+
+
+@auth.before_app_request
+def before_request():
+    current_user = flask_login.current_user
+
+    if current_user.is_authenticated \
+            and not current_user.confirmed \
+            and flask.request.blueprint != 'auth' \
+            and flask.request.endpoint != 'static':
+        return flask.redirect(flask.url_for('auth.unconfirmed'))
+
+
+@auth.route('/unconfirmed')
+def unconfirmed():
+    current_user = flask_login.current_user
+
+    if current_user.is_anonymous or current_user.confirmed:
+        return flask.redirect(flask.url_for('main.welcome'))
+
+    return flask.render_template('auth/unconfirmed.html', username=current_user.username)

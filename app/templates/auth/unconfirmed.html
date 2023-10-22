@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+{% endblock %}
+
+{% block page_header %}
+    Hello, {{ username }}!
+{% endblock %}
+
+{% block page_content %}
+    <h2>You have not confirmed your account yet.</h2>
+    Before you can access this site you need to confirm your account. Check your inbox, you should have received an
+    email with a confirmation link.
+    Need another confirmation email? <a href={{ url_for('auth.reconfirm') }}>Click here</a>
+{% endblock %}
