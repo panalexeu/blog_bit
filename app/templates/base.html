@@ -4,21 +4,35 @@
     blog_bit
 {% endblock %}
 
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
 {% block navbar %}
     <div class="navbar navbar-inverse">
-        <a class="navbar-brand" href="/">blog-bit</a>
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/auth/login">Login</a></li>
-        </ul>
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">blog-bit</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="/auth/logout">Log Out</a></li>
+                    {% else %}
+                        <li><a href="/auth/login">Log In</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
-{% block content %}
-    <div class="container">
-        <div class="page-header">
-            <h1>{% block page_header %}{% endblock %}</h1>
-        </div>
-        {% block page_content %}{% endblock %}
-    </div>
-{% endblock %}
+<h2>Welcome to blog_bit!</h2>
+To confirm your account please click on the following link:
+{{ url_for('auth.confirm', token=token, _external=True) }}
+Sincerely,
+The Flasky Team
+Note: replies to this email address are not monitored.
