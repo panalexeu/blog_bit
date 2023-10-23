@@ -1,5 +1,5 @@
 from flask import current_app
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -88,6 +88,12 @@ class User(db.Model, UserMixin):
             else:
                 self.role = Role.query.filter_by(default=True).first()
 
+    def can(self, perm):
+        return self.role is not None and self.role.has_permission(perm)
+
+    def is_administrator(self):
+        return self.can(Permission.ADMIN)
+
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -115,3 +121,12 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+# To avoid useless checks for current_user is he anonymous through code
+class AnonymousUser(AnonymousUserMixin):
+    def can(self, perm):
+        return False
+
+    def is_administrator(self):
+        return False
