@@ -28,6 +28,7 @@
                                 Account <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
+                                <li><a href={{ url_for('main.edit_profile') }}> Edit Profile</a></li>
                                 <li><a href={{ url_for('auth.logout') }}>Logout</a></li>
                             </ul>
                         </li>
@@ -49,8 +50,13 @@
             </div>
         {% endfor %}
         <div class="page-header">
-            <h1>{% block page_header %}{% endblock %}</h1>
+            {% block page_header %}{% endblock %}
         </div>
         {% block page_content %}{% endblock %}
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
 {% endblock %}

@@ -13,6 +13,7 @@ migrate = Migrate(app, db)
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
 
+
 @app.context_processor
 def inject_permissions():
-    return dict(Permission=Permission)
+    return dict(Permission=Permission)  # to use permission in templates
