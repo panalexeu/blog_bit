@@ -6,6 +6,7 @@ basedir = os.path.dirname(__file__)  # path to config file directory
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'alexeu 2000004')
 
+    ADMIN = 'alexeu.debug@gmail.com'
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
     MAIL_PORT = os.environ.get('MAIL_PORT', 587)
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', True)
