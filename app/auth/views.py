@@ -91,12 +91,12 @@ def reconfirm():
 @auth.before_app_request
 def before_request():
     current_user = flask_login.current_user
-
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and flask.request.blueprint != 'auth' \
-            and flask.request.endpoint != 'static':
-        return flask.redirect(flask.url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        current_user.ping()  # updating user last time seen property
+        if not current_user.confirmed \
+                and flask.request.blueprint != 'auth' \
+                and flask.request.endpoint != 'static':
+            return flask.redirect(flask.url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
