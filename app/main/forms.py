@@ -29,8 +29,8 @@ class EditProfileAdminForm(EditProfileForm):
         vl.Regexp('^[A-Za-z][A-Za-z0-9_.]*$',
                   message='Usernames must contain only letters, numbers, dots, or underscores')
     ])
-    confirmed = BooleanField('Confirm status')
     role = SelectField('Role', coerce=int)
+    confirmed = BooleanField('Confirm status')
     submit = SubmitField('Submit')
 
     def validate_email(self, field):
