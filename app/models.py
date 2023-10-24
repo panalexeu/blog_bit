@@ -77,6 +77,7 @@ class User(db.Model, UserMixin):
     pfp_hash = db.Column(db.String(32))
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -153,3 +154,10 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))

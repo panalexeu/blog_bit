@@ -2,15 +2,28 @@ from flask_login import login_required, current_user
 from flask import render_template, flash, redirect, url_for
 
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm
-from ..models import User, Role
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm
+from ..models import User, Role, Post, Permission
 from .. import db
 from ..decorators import admin_required
 
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def welcome():
-    return render_template('main/welcome.html')
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Post(
+            body=form.body.data,
+            author=current_user._get_current_object()
+        )
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(url_for('main.welcome'))
+
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('main/welcome.html', form=form, posts=posts)
 
 
 @main.route('/profile/<username>')
