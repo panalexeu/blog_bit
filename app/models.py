@@ -4,6 +4,8 @@ from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
+from markdown import markdown
+import bleach
 
 from . import db
 
@@ -159,5 +161,20 @@ class AnonymousUser(AnonymousUserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    # if body parameter changed this listener checks raw md body input and converts it to html
+    @staticmethod
+    def on_changed_body(target, value, _, __):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+
+
+        target.body_html = bleach.linkify(bleach.clean(
+            text=markdown(value, output_format='html'),
+            tags=allowed_tags,
+            strip=True
+        ))
