@@ -27,11 +27,11 @@ def welcome():
     page = request.args.get('page', default=1, type=int)
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page,
-        per_page=16,
+        per_page=8,
     )
     posts = pagination.items
 
-    return render_template('main/welcome.html', form=form, posts=posts)
+    return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination)
 
 
 @main.route('/profile/<username>')
@@ -39,7 +39,15 @@ def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.timestamp.desc()).all()
 
-    return render_template('main/profile.html', user=user, posts=posts)
+    # Posts paginating implementation
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=8,
+    )
+    posts = pagination.items
+
+    return render_template('main/profile.html', user=user, posts=posts, pagination=pagination)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
