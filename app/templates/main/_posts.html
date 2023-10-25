@@ -23,6 +23,12 @@
                 {% else %}
                     {{ post.body }}
                 {% endif %}
+
+                <div class="post-footer">
+                    <a href="{{ url_for('main.post', id=post.id) }}">
+                        <span class="label label-info">Get link</span>
+                    </a>
+                </div>
             </div>
         </li>
     {% endfor %}
