@@ -26,8 +26,18 @@
 
                 <div class="post-footer">
                     <a href="{{ url_for('main.post', id=post.id) }}">
-                        <span class="label label-info">Get link</span>
+                        <span class="label label-info">Get post</span>
                     </a>
+
+                    {% if current_user == post.author %}
+                        <a href="{{ url_for('main.edit', id=post.id) }}">
+                            <span class="label label-default">Edit</span>
+                        </a>
+                    {% elif current_user.is_administrator() %}
+                        <a href="{{ url_for('main.edit', id=post.id) }}">
+                            <span class="label label-danger">Edit [ADMIN]</span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </li>
