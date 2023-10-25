@@ -1,5 +1,5 @@
 from flask_login import login_required, current_user
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
@@ -12,6 +12,7 @@ from ..decorators import admin_required
 def welcome():
     form = PostForm()
 
+    # User submitted new post
     if form.validate_on_submit():
         post = Post(
             body=form.body.data,
@@ -22,7 +23,14 @@ def welcome():
 
         return redirect(url_for('main.welcome'))
 
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    # Posts paginating implementation
+    page = request.args.get('page', default=1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=16,
+    )
+    posts = pagination.items
+
     return render_template('main/welcome.html', form=form, posts=posts)
 
 

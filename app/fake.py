@@ -29,10 +29,10 @@ def generate_users(amount=50):
 
 def generate_posts(amount=50):
     fake = Faker()
-    user_count = User.query.count() - 1
+    user_count = User.query.count()
 
     for _ in range(amount):
-        user = User.query.offset(randint(0, user_count)).first()
+        user = User.query.offset(randint(1, user_count)).first()
         post = Post(
             body=fake.text(),
             timestamp=fake.past_date(),
