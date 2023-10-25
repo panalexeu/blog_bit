@@ -1,5 +1,5 @@
 from flask_login import login_required, current_user
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, current_app
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
@@ -27,7 +27,7 @@ def welcome():
     page = request.args.get('page', default=1, type=int)
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page,
-        per_page=8,
+        per_page=current_app.config['POSTS_PER_PAGE'],
     )
     posts = pagination.items
 
@@ -37,13 +37,12 @@ def welcome():
 @main.route('/profile/<username>')
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = user.posts.order_by(Post.timestamp.desc()).all()
 
     # Posts paginating implementation
     page = request.args.get('page', default=1, type=int)
     pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
         page=page,
-        per_page=8,
+        per_page=current_app.config['POSTS_PER_PAGE'],
     )
     posts = pagination.items
 

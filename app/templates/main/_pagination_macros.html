@@ -6,10 +6,10 @@
         </a>
     </li>
 
-    {% for page_num in pagination.iter_pages() %}
-        {% if page_num %}
-            <li {% if page_num == pagination.page %} class="active" {% endif %}>
-                <a href="{{ url_for(endpoint, page=page_num, **kwargs) }}">{{ page_num }}</a>
+    {% for page in pagination.iter_pages() %}
+        {% if page %}
+            <li {% if page == pagination.page %} class="active" {% endif %}>
+                <a href="{{ url_for(endpoint, page=page, **kwargs) }}">{{ page }}</a>
             </li>
         {% else %}
             <li class="disabled">
