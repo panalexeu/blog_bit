@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
@@ -73,8 +74,10 @@ class User(db.Model, UserMixin):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    pfp_hash = db.Column(db.String(32))
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -87,6 +90,10 @@ class User(db.Model, UserMixin):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # Pfp hash generating
+        self.pfp_hash = self.generate_pfp_hash()
+
+        # Role assigning
         if self.role is None:
             if self.email == current_app.config['ADMIN']:
                 self.role = Role.query.filter_by(name='Administrator').first()
@@ -129,6 +136,13 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def generate_pfp_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+
+    def get_pfp(self, size=100, image_gen='retro'):
+        url = 'https://secure.gravatar.com/avatar'
+        return f'{url}/{self.pfp_hash}?s={size}&d={image_gen}&r=g'
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -140,3 +154,10 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))

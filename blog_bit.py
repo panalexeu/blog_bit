@@ -5,8 +5,8 @@ from app import create_app, db
 from app.models import User, Role, Permission
 
 
-app = create_app(os.getenv('FLASK_CONFIG', 'default'))
-migrate = Migrate(app, db)
+app = create_app(os.getenv('FLASK_CONFIG', 'default'))  # instantiating the app
+migrate = Migrate(app, db)  # to make migrations through terminal
 
 
 @app.shell_context_processor

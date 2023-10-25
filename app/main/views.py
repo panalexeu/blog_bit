@@ -1,28 +1,59 @@
 from flask_login import login_required, current_user
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request, current_app
 
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm
-from ..models import User, Role
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm
+from ..models import User, Role, Post, Permission
 from .. import db
 from ..decorators import admin_required
 
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def welcome():
-    return render_template('main/welcome.html')
+    form = PostForm()
+
+    # User submitted new post
+    if form.validate_on_submit():
+        post = Post(
+            body=form.body.data,
+            author=current_user._get_current_object()
+        )
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(url_for('main.welcome'))
+
+    # Posts paginating implementation
+    page = request.args.get('page', default=1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+    posts = pagination.items
+
+    return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination)
 
 
 @main.route('/profile/<username>')
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('main/profile.html', user=user)
+
+    # Posts paginating implementation
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+    posts = pagination.items
+
+    return render_template('main/profile.html', user=user, posts=posts, pagination=pagination)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm()
+
     if form.validate_on_submit():
         current_user.name = form.name.data
         current_user.about_me = form.about_me.data

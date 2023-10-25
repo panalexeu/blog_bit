@@ -29,8 +29,8 @@ class EditProfileAdminForm(EditProfileForm):
         vl.Regexp('^[A-Za-z][A-Za-z0-9_.]*$',
                   message='Usernames must contain only letters, numbers, dots, or underscores')
     ])
-    confirmed = BooleanField('Confirm status')
     role = SelectField('Role', coerce=int)
+    confirmed = BooleanField('Confirm status')
     submit = SubmitField('Submit')
 
     def validate_email(self, field):
@@ -40,3 +40,8 @@ class EditProfileAdminForm(EditProfileForm):
     def validate_username(self, field):
         if field.data != self.user.username and User.query.filter_by(username=field.data).first():
             raise ValidationError('Username is already in use.')
+
+
+class PostForm(FlaskForm):
+    body = TextAreaField("What's on your mind?")
+    submit = SubmitField('Submit')
