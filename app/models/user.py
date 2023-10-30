@@ -6,6 +6,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
+from app.models import Follow
 from app.models.role import Permission, Role
 
 
@@ -21,7 +22,22 @@ class User(db.Model, UserMixin):
     pfp_hash = db.Column(db.String(32))
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    followed = db.relationship(
+        'Follow',
+        foreign_keys=[Follow.follower_id],
+        backref=db.backref('follower', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+    followers = db.relationship(
+        'Follow',
+        foreign_keys=[Follow.followed_id],
+        backref=db.backref('followed', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
 
     @property
     def password(self):
@@ -86,6 +102,30 @@ class User(db.Model, UserMixin):
     def get_pfp(self, size=100, image_gen='retro'):
         url = 'https://secure.gravatar.com/avatar'
         return f'{url}/{self.pfp_hash}?s={size}&d={image_gen}&r=g'
+
+    def is_following(self, user):
+        if user.id is None:
+            return False
+        else:
+            return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        if user.id is None:
+            return False
+        else:
+            return self.followers.filter_by(follower_id=user.id).first() is not None
+
+    def follow(self, user):
+        if not self.is_following(user):
+            follow = Follow(follower=self, followed=user)
+            db.session.add(follow)
+            db.session.commit()
+
+    def unfollow(self, user):
+        follow = self.followed.filter_by(followed_id=user.id).first()
+        if follow:
+            db.session.delete(follow)
+            db.session.commit()
 
     def __repr__(self):
         return f'<User {self.username}>'
