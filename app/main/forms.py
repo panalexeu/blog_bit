@@ -3,7 +3,8 @@ from wtforms import StringField, TextAreaField, SubmitField, PasswordField, Bool
 from wtforms import validators as vl
 from flask_pagedown.fields import PageDownField
 
-from ..models import Role, User
+from ..models import User
+from ..models import Role
 
 
 class EditProfileForm(FlaskForm):

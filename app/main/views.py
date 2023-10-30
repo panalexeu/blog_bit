@@ -3,7 +3,7 @@ from flask import render_template, abort, flash, redirect, url_for, request, cur
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
-from ..models import User, Role, Post, Permission
+from ..models import User, Role, Post
 from .. import db
 from ..decorators import admin_required
 
@@ -75,8 +75,8 @@ def edit_profile():
 @main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
-def edit_profile_admin(id):
-    user = User.query.get_or_404(id)
+def edit_profile_admin(_id):
+    user = User.query.get_or_404(_id)
     form = EditProfileAdminForm(user)
 
     if form.validate_on_submit():
@@ -105,15 +105,15 @@ def edit_profile_admin(id):
 
 
 @main.route('/post/<int:id>')
-def post(id):
-    post = Post.query.get_or_404(id)
+def post(_id):
+    post = Post.query.get_or_404(_id)
     return render_template('main/post.html', posts=[post])
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit(id):
-    post = Post.query.get_or_404(id)
+def edit(_id):
+    post = Post.query.get_or_404(_id)
 
     if current_user != post.author and not current_user.is_administrator():
         abort(403)

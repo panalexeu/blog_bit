@@ -6,7 +6,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from app.models.Role import Permission, Role
+from app.models.role import Permission, Role
 
 
 class User(db.Model, UserMixin):
