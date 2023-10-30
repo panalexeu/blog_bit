@@ -1,0 +1,23 @@
+<ul class="posts">
+    {% for follow in follows %}
+        <li class="post">
+            <div class="profile-thumbnail">
+                <a href="{{ url_for('main.profile', username=follow['user'].username) }}">
+                    <img class="img-rounded profile-thumbnail"
+                         src="{{ follow['user'].get_pfp(size=40) }}"
+                         alt="{{ follow['user'].username }} profile picture">
+                </a>
+            </div>
+
+            <div class="post-date">Started following {{ moment(follow['timestamp']).fromNow() }}</div>
+
+            <div class="post-author">
+                <a href="{{ url_for('main.profile', username=follow['user'].username) }}">
+                    {{ follow['user'].username }}
+                </a>
+            </div>
+
+            <div class="post-content"></div>
+        </li>
+    {% endfor %}
+</ul>

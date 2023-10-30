@@ -3,7 +3,7 @@ from flask import render_template, abort, flash, redirect, url_for, request, cur
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
-from ..models import User, Role, Post, Permission
+from ..models import User, Role, Post, Permission, Follow
 from .. import db
 from ..decorators import admin_required, permission_required
 
@@ -170,16 +170,32 @@ def unfollow(username):
 
     return redirect(url_for('main.profile', username=username))
 
-# @main.route('/followers/<username>')
-# def followers(username):
-#     user = User.query.filter_by(username=username).first_or_404()
-#
-#     page = request.args.get('page', 1, type=int)
-#     pagination = user.followers.paginate(
-#         page=page,
-#         per_page=current_app.config['POSTS_PER_PAGE'],
-#     )
-#     follows = pagination.items
-#
-#     return render_template(None)
 
+@main.route('/followers/<username>')
+def followers(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.followers.order_by(Follow.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+
+    follows = [{'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items]
+
+    return render_template('main/followers.html', user=user, follows=follows, pagination=pagination)
+
+
+@main.route('/following/<username>')
+def following(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.followed.order_by(Follow.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+
+    follows = [{'user': item.followed, 'timestamp': item.timestamp} for item in pagination.items]
+
+    return render_template('main/following.html', user=user, follows=follows, pagination=pagination)
