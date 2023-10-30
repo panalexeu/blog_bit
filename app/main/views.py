@@ -75,8 +75,8 @@ def edit_profile():
 @main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
-def edit_profile_admin(_id):
-    user = User.query.get_or_404(_id)
+def edit_profile_admin(id):
+    user = User.query.get_or_404(id)
     form = EditProfileAdminForm(user)
 
     if form.validate_on_submit():
@@ -105,15 +105,15 @@ def edit_profile_admin(_id):
 
 
 @main.route('/post/<int:id>')
-def post(_id):
-    post = Post.query.get_or_404(_id)
+def post(id):
+    post = Post.query.get_or_404(id)
     return render_template('main/post.html', posts=[post])
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit(_id):
-    post = Post.query.get_or_404(_id)
+def edit(id):
+    post = Post.query.get_or_404(id)
 
     if current_user != post.author and not current_user.is_administrator():
         abort(403)
