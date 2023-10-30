@@ -138,6 +138,9 @@ def edit(id):
 @permission_required(Permission.FOLLOW)
 def follow(username):
     user = User.query.filter_by(username=username).first_or_404()
+    if user == current_user:
+        flash("You can't follow yourself!")
+        return redirect(url_for('main.welcome'))
 
     if current_user.is_following(user):
         flash('You are already following this user.')
@@ -154,6 +157,9 @@ def follow(username):
 @permission_required(Permission.FOLLOW)
 def unfollow(username):
     user = User.query.filter_by(username=username).first_or_404()
+    if user == current_user:
+        flash("You can't unfollow yourself!")
+        return redirect(url_for('main.welcome'))
 
     if not current_user.is_following(user):
         flash('You are not following this user.')
