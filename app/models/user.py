@@ -6,8 +6,8 @@ from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from app.models import Follow
-from app.models.role import Permission, Role
+from .follow import Follow
+from .role import Permission, Role
 
 
 class User(db.Model, UserMixin):
@@ -104,16 +104,10 @@ class User(db.Model, UserMixin):
         return f'{url}/{self.pfp_hash}?s={size}&d={image_gen}&r=g'
 
     def is_following(self, user):
-        if user.id is None:
-            return False
-        else:
-            return self.followed.filter_by(followed_id=user.id).first() is not None
+        return self.followed.filter_by(followed_id=user.id).first() is not None
 
     def is_followed_by(self, user):
-        if user.id is None:
-            return False
-        else:
-            return self.followers.filter_by(follower_id=user.id).first() is not None
+        return self.followers.filter_by(follower_id=user.id).first() is not None
 
     def follow(self, user):
         if not self.is_following(user):

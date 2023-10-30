@@ -3,9 +3,9 @@ from flask import render_template, abort, flash, redirect, url_for, request, cur
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
-from ..models import User, Role, Post
+from ..models import User, Role, Post, Permission
 from .. import db
-from ..decorators import admin_required
+from ..decorators import admin_required, permission_required
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -131,3 +131,49 @@ def edit(_id):
     form.body.data = post.body
 
     return render_template('main/edit_post.html', form=form)
+
+
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    if current_user.is_following(user):
+        flash('You are already following this user.')
+        return redirect(url_for('main.profile', username=username))
+
+    current_user.follow(user)
+    flash(f'You are now following {username}.')
+
+    return redirect(url_for('main.profile', username=username))
+
+
+@main.route('/unfollow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def unfollow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    if not current_user.is_following(user):
+        flash('You are not following this user.')
+        return redirect(url_for('main.profile', username=username))
+
+    current_user.unfollow(user)
+    flash(f'You stopped following {username}.')
+
+    return redirect(url_for('main.profile', username=username))
+
+# @main.route('/followers/<username>')
+# def followers(username):
+#     user = User.query.filter_by(username=username).first_or_404()
+#
+#     page = request.args.get('page', 1, type=int)
+#     pagination = user.followers.paginate(
+#         page=page,
+#         per_page=current_app.config['POSTS_PER_PAGE'],
+#     )
+#     follows = pagination.items
+#
+#     return render_template(None)
+
