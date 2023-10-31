@@ -1,5 +1,5 @@
 from flask_login import login_required, current_user
-from flask import render_template, abort, flash, redirect, url_for, request, current_app
+from flask import render_template, abort, flash, make_response, redirect, url_for, request, current_app
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
@@ -23,15 +23,38 @@ def welcome():
 
         return redirect(url_for('main.welcome'))
 
+    # if showing posts of only followed users set
+    show_followed = request.cookies['show_followed']
+    if show_followed:
+        query = current_user.followed_posts.query
+    else:
+        query = Post.query
+
     # Posts paginating implementation
     page = request.args.get('page', default=1, type=int)
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+    pagination = query.order_by(Post.timestamp.desc()).paginate(
         page=page,
         per_page=current_app.config['POSTS_PER_PAGE'],
     )
     posts = pagination.items
 
     return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination)
+
+
+@main.route('/all')
+@login_required
+def show_all():
+    response = make_response(redirect(url_for('main.welcome')))
+    response.set_cookie('show_followed', '', max_age=60 * 60 * 24 * 30)  # max age of cookie is set for 30 days
+    return response
+
+
+@main.route('/followed')
+@login_required
+def show_all():
+    response = make_response(redirect(url_for('main.welcome')))
+    response.set_cookie('show_followed', '1', max_age=60 * 60 * 24 * 30)
+    return response
 
 
 @main.route('/profile/<username>')
