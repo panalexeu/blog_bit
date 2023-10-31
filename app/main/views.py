@@ -1,11 +1,11 @@
 from flask_login import login_required, current_user
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, abort, flash, redirect, url_for, request, current_app
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm
-from ..models import User, Role, Post, Permission
+from ..models import User, Role, Post, Permission, Follow
 from .. import db
-from ..decorators import admin_required
+from ..decorators import admin_required, permission_required
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -102,3 +102,100 @@ def edit_profile_admin(id):
     form.role.data = user.role
 
     return render_template('main/edit_profile.html', form=form)
+
+
+@main.route('/post/<int:id>')
+def post(id):
+    post = Post.query.get_or_404(id)
+    return render_template('main/post.html', posts=[post])
+
+
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit(id):
+    post = Post.query.get_or_404(id)
+
+    if current_user != post.author and not current_user.is_administrator():
+        abort(403)
+
+    form = PostForm()
+    if form.validate_on_submit():
+        post.body = form.body.data
+        db.session.add(post)
+        db.session.commit()
+
+        flash('The post has been updated.')
+
+        return redirect(url_for('main.post', id=post.id))
+
+    form.body.data = post.body
+
+    return render_template('main/edit_post.html', form=form)
+
+
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if user == current_user:
+        flash("You can't follow yourself!")
+        return redirect(url_for('main.welcome'))
+
+    if current_user.is_following(user):
+        flash('You are already following this user.')
+        return redirect(url_for('main.profile', username=username))
+
+    current_user.follow(user)
+    flash(f'You are now following {username}.')
+
+    return redirect(url_for('main.profile', username=username))
+
+
+@main.route('/unfollow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def unfollow(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    if user == current_user:
+        flash("You can't unfollow yourself!")
+        return redirect(url_for('main.welcome'))
+
+    if not current_user.is_following(user):
+        flash('You are not following this user.')
+        return redirect(url_for('main.profile', username=username))
+
+    current_user.unfollow(user)
+    flash(f'You stopped following {username}.')
+
+    return redirect(url_for('main.profile', username=username))
+
+
+@main.route('/followers/<username>')
+def followers(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.followers.order_by(Follow.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+
+    follows = [{'user': item.follower, 'timestamp': item.timestamp} for item in pagination.items]
+
+    return render_template('main/followers.html', user=user, follows=follows, pagination=pagination)
+
+
+@main.route('/following/<username>')
+def following(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    page = request.args.get('page', default=1, type=int)
+    pagination = user.followed.order_by(Follow.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['POSTS_PER_PAGE'],
+    )
+
+    follows = [{'user': item.followed, 'timestamp': item.timestamp} for item in pagination.items]
+
+    return render_template('main/following.html', user=user, follows=follows, pagination=pagination)

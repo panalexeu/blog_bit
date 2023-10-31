@@ -40,3 +40,14 @@ def generate_posts(amount=50):
         )
         db.session.add(post)
         db.session.commit()
+
+
+def generate_follows(amount=100):
+    user_count = User.query.count() - 1
+
+    for _ in range(amount):
+        user = User.query.offset(randint(1, user_count)).first()
+        other_user = User.query.offset(randint(1, user_count)).first()
+
+        if user != other_user:
+            user.follow(other_user)
