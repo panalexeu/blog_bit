@@ -24,9 +24,9 @@ def welcome():
         return redirect(url_for('main.welcome'))
 
     # if showing posts of only followed users set
-    show_followed = request.cookies['show_followed']
+    show_followed = request.cookies.get('show_followed')
     if show_followed:
-        query = current_user.followed_posts.query
+        query = current_user.followed_posts
     else:
         query = Post.query
 
@@ -38,11 +38,10 @@ def welcome():
     )
     posts = pagination.items
 
-    return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination)
+    return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination, show_followed=show_followed)
 
 
 @main.route('/all')
-@login_required
 def show_all():
     response = make_response(redirect(url_for('main.welcome')))
     response.set_cookie('show_followed', '', max_age=60 * 60 * 24 * 30)  # max age of cookie is set for 30 days
@@ -51,7 +50,7 @@ def show_all():
 
 @main.route('/followed')
 @login_required
-def show_all():
+def show_followed():
     response = make_response(redirect(url_for('main.welcome')))
     response.set_cookie('show_followed', '1', max_age=60 * 60 * 24 * 30)
     return response

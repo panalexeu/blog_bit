@@ -42,8 +42,7 @@ class User(db.Model, UserMixin):
 
     @property
     def followed_posts(self):
-        return Follow.query.filter_by(Follow.followed_id == self.id).join(Post, Post.author_id == Follow.followed_id)
-
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id).filter_by(follower_id=self.id)
 
     @property
     def password(self):
