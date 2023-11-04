@@ -27,19 +27,21 @@
                 {% endif %}
             </div>
 
-            <div class="post-footer">
-                {% if current_user.can(Permission.MODERATE) %}
+            {% if moderate %}
+                <div class="post-footer">
                     {% if comment.disabled %}
-                        <a class="btn btn-default btn-sm" href={{ url_for('main.moderate_enable', id=comment.id, page=page) }}>
+                        <a class="btn btn-default btn-sm"
+                           href={{ url_for('main.moderate_enable', id=comment.id, page=page) }}>
                             Enable
                         </a>
                     {% else %}
-                        <a class="btn btn-danger btn-sm" href={{ url_for('main.moderate_disable', id=comment.id, page=page) }}>
+                        <a class="btn btn-danger btn-sm"
+                           href={{ url_for('main.moderate_disable', id=comment.id, page=page) }}>
                             Disable
                         </a>
                     {% endif %}
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </li>
     {% endfor %}
 </ul>
