@@ -50,3 +50,7 @@ div.post-footer * {
 div.welcome-tabs {
     margin-top: 16px;
 }
+
+div.pagination {
+    float: right;
+}

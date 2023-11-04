@@ -13,5 +13,7 @@
     {% endif %}
 
     {% include 'main/_comments.html' %}
-    {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=posts[0].id) }}
+    <div class="pagination">
+        {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=posts[0].id) }}
+    </div>
 {% endblock %}

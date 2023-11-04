@@ -245,3 +245,17 @@ def following(username):
     follows = [{'user': item.followed, 'timestamp': item.timestamp} for item in pagination.items]
 
     return render_template('main/following.html', user=user, follows=follows, pagination=pagination)
+
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate():
+    page = request.args.get('page', default=1, type=int)
+    pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
+        page=page,
+        per_page=current_app.config['COMMENTS_PER_PAGE']
+    )
+    comments = pagination.items
+
+    return render_template('main/moderate.html', comments=comments, page=page, pagination=pagination)

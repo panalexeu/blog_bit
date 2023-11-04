@@ -28,7 +28,9 @@
     </div>
 
     {% include 'main/_posts.html' %}
-    {{ page_macros.pagination_widget(pagination, endpoint='main.welcome') }}
+    <div class="pagination">
+        {{ page_macros.pagination_widget(pagination, endpoint='main.welcome') }}
+    </div>
 {% endblock %}
 
 {% block scripts %}
