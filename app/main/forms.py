@@ -50,5 +50,5 @@ class PostForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    body = StringField('What do you think about it?', validators=[vl.DataRequired()])
+    body = StringField('What do you think?', validators=[vl.DataRequired()])
     submit = SubmitField('Submit')

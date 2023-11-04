@@ -43,6 +43,10 @@ div.post-footer {
     text-align: right;
 }
 
+div.post-footer * {
+    margin-left: 2px;
+}
+
 div.welcome-tabs {
     margin-top: 16px;
 }

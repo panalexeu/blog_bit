@@ -7,8 +7,11 @@
 {% block page_content %}
     {% include 'main/_posts.html' %}
 
-    <h3><b>Comments</b></h3>
-    {{ wtf.quick_form(form) }}
+    <h4>Comments</h4>
+    {% if current_user.can(Permission.WRITE) %}
+        {{ wtf.quick_form(form) }}
+    {% endif %}
+
     {% include 'main/_comments.html' %}
     {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=posts[0].id) }}
 {% endblock %}
