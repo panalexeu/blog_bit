@@ -1,0 +1,29 @@
+<ul class="posts" id="comments">
+    {% for comment in comments %}
+        <li class="post">
+            <div class="profile-thumbnail">
+                <a href="{{ url_for('main.profile', username=comment.author.username) }}">
+                    <img class="img-rounded profile-thumbnail"
+                         src="{{ comment.author.get_pfp(size=40) }}"
+                         alt="{{ comment.author.username }} profile picture">
+                </a>
+            </div>
+
+            <div class="post-date">{{ moment(comment.timestamp).fromNow() }}</div>
+
+            <div class="post-author">
+                <a href="{{ url_for('main.profile', username=comment.author.username) }}">
+                    {{ comment.author.username }}
+                </a>
+            </div>
+
+            <div class="post-content">
+                {% if comment.body_html %}
+                    {{ comment.body_html | safe }}
+                {% else %}
+                    {{ comment.body }}
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>
