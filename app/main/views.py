@@ -259,3 +259,27 @@ def moderate():
     comments = pagination.items
 
     return render_template('main/moderate.html', comments=comments, page=page, pagination=pagination)
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_enable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+
+
+@main.route('/moderate/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_disable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
