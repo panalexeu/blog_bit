@@ -29,13 +29,17 @@
 
             {% if moderate %}
                 <div class="post-footer">
+                    <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
+                        Post
+                    </a>
+
                     {% if comment.disabled %}
-                        <a class="btn btn-default btn-sm"
+                        <a class="btn btn-default"
                            href={{ url_for('main.moderate_enable', id=comment.id, page=page) }}>
                             Enable
                         </a>
                     {% else %}
-                        <a class="btn btn-danger btn-sm"
+                        <a class="btn btn-danger"
                            href={{ url_for('main.moderate_disable', id=comment.id, page=page) }}>
                             Disable
                         </a>
