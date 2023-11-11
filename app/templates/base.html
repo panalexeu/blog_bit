@@ -24,7 +24,7 @@
                         <li><a href={{ url_for('main.profile', username=current_user.username) }}>Profile</a></li>
                     {% endif %}
                     {% if current_user.can(Permission.MODERATE) %}
-                        <li><a href={{ url_for('main.moderate') }}>Moderate Comments</a></li>
+                        <li><a href={{ url_for('main.moderate') }}>Moderate</a></li>
                     {% endif %}
                 </ul>
 

@@ -71,6 +71,9 @@ class User(db.Model, UserMixin):
     def is_administrator(self):
         return self.can(Permission.ADMIN)
 
+    def is_mod(self):
+        return self.can(Permission.MODERATE)
+
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 

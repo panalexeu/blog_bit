@@ -267,6 +267,7 @@ def moderate():
 def moderate_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
+
     db.session.add(comment)
     db.session.commit()
 
@@ -279,7 +280,30 @@ def moderate_enable(id):
 def moderate_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
+
     db.session.add(comment)
     db.session.commit()
 
     return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+
+
+@main.route('/upgrade-to-mod/<int:id>')
+@login_required
+@admin_required
+def upgrade_to_mod(id):
+    user = User.query.get_or_404(id)
+    user.role = Role.query.filter_by(name='Moderator').first()
+    db.session.commit()
+
+    return redirect(url_for('main.profile', username=user.username))
+
+
+@main.route('/downgrade-mod/<int:id>')
+@login_required
+@admin_required
+def downgrade_mod(id):
+    user = User.query.get_or_404(id)
+    user.role = Role.query.filter_by(name='User').first()
+    db.session.commit()
+
+    return redirect(url_for('main.profile', username=user.username))
