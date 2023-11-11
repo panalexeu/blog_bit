@@ -55,6 +55,11 @@
             Following: <span class="badge">{{ user.followed.count() }}</span>
         </a>
 
+        <a href="{{ url_for('main.profile', username=user.username) }}#profile_posts">
+            Posts: <span class="badge">{{ user.posts.count() }}</span>
+        </a>
+
+
         {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
             | <span class="label label-default">Follows you</span>
         {% endif %}
@@ -80,7 +85,7 @@
     </div>
 
     {% include 'main/_posts.html' %}
-    <div class="pagination">
+    <div class="pagination" id="profile_posts">
         {{ page_macros.pagination_widget(pagination, endpoint='main.profile', username=user.username) }}
     </div>
 {% endblock %}
