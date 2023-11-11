@@ -48,6 +48,18 @@
                 {% endif %}
             {% endif %}
 
+            {% if current_user.is_administrator() and current_user != user %}
+                {% if user.is_mod() %}
+                    <a href="{{ url_for('main.downgrade_mod', id=user.id) }}" class="btn btn-default">Downgrade</a>
+                {% else %}
+                    <a href="{{ url_for('main.upgrade_to_mod', id=user.id) }}" class="btn btn-info">Upgrade</a>
+                {% endif %}
+
+                <a class="btn btn-danger" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
+                    Edit Profile [ADMIN]
+                </a>
+            {% endif %}
+
             <a href="{{ url_for('main.followers', username=user.username) }}">
                 Followers: <span class="badge">{{ user.followers.count() }}</span>
             </a>
@@ -76,18 +88,6 @@
                     </a>
                 {% endif %}
             {% endif %}
-
-            {% if current_user.is_administrator() and current_user != user %}
-                <a class="btn btn-danger" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
-                    Edit Profile [ADMIN]
-                </a>
-
-                {% if user.is_mod() %}
-                    <a href="{{ url_for('main.downgrade_mod', id=user.id) }}" class="btn btn-default">Downgrade</a>
-                {% else %}
-                    <a href="{{ url_for('main.upgrade_to_mod', id=user.id) }}" class="btn btn-primary">Upgrade</a>
-                {% endif %}
-            {% endif %}
         </p>
 
         <p>
@@ -96,7 +96,7 @@
             {% elif user.is_mod() %}
                 <span class="label label-primary">Moderator</span>
             {% else %}
-                <span class="label label-default">User</span>
+                <span class="label label-info">User</span>
             {% endif %}
         </p>
     </div>
