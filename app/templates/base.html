@@ -23,6 +23,9 @@
                     {% if current_user.is_authenticated %}
                         <li><a href={{ url_for('main.profile', username=current_user.username) }}>Profile</a></li>
                     {% endif %}
+                    {% if current_user.can(Permission.MODERATE) %}
+                        <li><a href={{ url_for('main.moderate') }}>Moderate Comments</a></li>
+                    {% endif %}
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -50,12 +53,21 @@
 
 {% block content %}
     <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+            {% if category == 'success' %}
+                {% set alert_type = "alert alert-success" %}
+            {% elif category == 'warning' %}
+                {% set alert_type = "alert alert-warning" %}
+            {% elif category == 'error' %}
+                {% set alert_type = "alert alert-danger" %}
+            {% endif %}
+
+            <div class="{{ alert_type }}">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ message }}
             </div>
         {% endfor %}
+
         <div class="page-header">
             {% block page_header %}{% endblock %}
         </div>

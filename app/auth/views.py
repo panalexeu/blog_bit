@@ -26,7 +26,7 @@ def login():
 
             return flask.redirect(next_)
         else:
-            flask.flash('Invalid email or password.')
+            flask.flash('Invalid email or password.', 'error')
 
     return flask.render_template('auth/login.html', form=form)
 
@@ -35,7 +35,7 @@ def login():
 @flask_login.login_required
 def logout():
     flask_login.logout_user()
-    flask.flash('You have been logged out.')
+    flask.flash('You have been logged out.', 'success')
     return flask.redirect(flask.url_for('main.welcome'))
 
 
@@ -56,7 +56,7 @@ def register():
         # Confirmation token generation and email sending
         token = user.generate_confirmation_token()
         send_email(user.email, 'Confirm your account', 'confirm', username=user.username, token=token)
-        flask.flash('A confirmation email has been sent to you by email.')
+        flask.flash('A confirmation email has been sent to you by email.', 'success')
 
         return flask.redirect(flask.url_for('auth.login'))
 
@@ -69,9 +69,9 @@ def confirm(token):
     if flask_login.current_user.confirmed:
         return flask.redirect(flask.url_for('main.welcome'))
     elif flask_login.current_user.confirm(token, expiration=3600):  # expiration is set in seconds 3600 = 1 hour
-        flask.flash('You have confirmed your account. Thanks!')
+        flask.flash('You have confirmed your account. Thanks!', 'success')
     else:
-        flask.flash('The confirmation link is invalid or has expired.')
+        flask.flash('The confirmation link is invalid or has expired.', 'error')
 
     return flask.redirect(flask.url_for('main.welcome'))
 
@@ -83,7 +83,7 @@ def reconfirm():
 
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm your account', 'confirm', username=current_user.username, token=token)
-    flask.flash('A new confirmation email has been sent to you by email.')
+    flask.flash('A new confirmation email has been sent to you by email.', 'warning')
 
     return flask.redirect(flask.url_for('main.welcome'))
 

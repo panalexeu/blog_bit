@@ -19,6 +19,7 @@ class Config:
 
     # Some app constants
     POSTS_PER_PAGE = 8
+    COMMENTS_PER_PAGE = 8
 
 
 class DevelopmentConfig(Config):

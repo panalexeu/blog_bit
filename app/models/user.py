@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from .follow import Follow
+from .post import Post
 from .role import Permission, Role
 
 
@@ -22,8 +23,8 @@ class User(db.Model, UserMixin):
     pfp_hash = db.Column(db.String(32))
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
-
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
     followed = db.relationship(
         'Follow',
         foreign_keys=[Follow.follower_id],
@@ -38,6 +39,10 @@ class User(db.Model, UserMixin):
         lazy='dynamic',
         cascade='all, delete-orphan'
     )
+
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id).filter_by(follower_id=self.id)
 
     @property
     def password(self):
@@ -127,7 +132,7 @@ class User(db.Model, UserMixin):
 
 # To avoid useless checks for current_user is he anonymous through code
 class AnonymousUser(AnonymousUserMixin):
-    def can(self, perm):
+    def can(self, _):
         return False
 
     def is_administrator(self):
