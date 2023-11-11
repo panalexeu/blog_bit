@@ -84,7 +84,7 @@ def edit_profile():
         db.session.add(current_user)
         db.session.commit()
 
-        flash('Your profile has been updated.')
+        flash('Your profile has been updated.', 'success')
 
         return redirect(url_for('.profile', username=current_user.username))
 
@@ -113,7 +113,7 @@ def edit_profile_admin(id):
         db.session.add(user)
         db.session.commit()
 
-        flash('User profile has been changed.')
+        flash('User profile has been changed.', 'success')
 
         return redirect(url_for('main.profile', username=user.username))
 
@@ -142,7 +142,7 @@ def post(id):
         db.session.add(comment)
         db.session.commit()
 
-        flash('Your comment has been published.')
+        flash('Your comment has been published.', 'success')
 
         return redirect(url_for('main.post', id=post.id))
 
@@ -170,7 +170,7 @@ def edit(id):
         db.session.add(post)
         db.session.commit()
 
-        flash('The post has been updated.')
+        flash('The post has been updated.', 'success')
 
         return redirect(url_for('main.post', id=post.id))
 
@@ -185,15 +185,15 @@ def edit(id):
 def follow(username):
     user = User.query.filter_by(username=username).first_or_404()
     if user == current_user:
-        flash("You can't follow yourself!")
+        flash("You can't follow yourself!", 'error')
         return redirect(url_for('main.welcome'))
 
     if current_user.is_following(user):
-        flash('You are already following this user.')
+        flash('You are already following this user.', 'warning')
         return redirect(url_for('main.profile', username=username))
 
     current_user.follow(user)
-    flash(f'You are now following {username}.')
+    flash(f'You are now following {username}.', 'success')
 
     return redirect(url_for('main.profile', username=username))
 
@@ -204,15 +204,15 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username=username).first_or_404()
     if user == current_user:
-        flash("You can't unfollow yourself!")
+        flash("You can't unfollow yourself!", 'error')
         return redirect(url_for('main.welcome'))
 
     if not current_user.is_following(user):
-        flash('You are not following this user.')
+        flash('You are not following this user.', 'warning')
         return redirect(url_for('main.profile', username=username))
 
     current_user.unfollow(user)
-    flash(f'You stopped following {username}.')
+    flash(f'You stopped following {username}.', 'success')
 
     return redirect(url_for('main.profile', username=username))
 
