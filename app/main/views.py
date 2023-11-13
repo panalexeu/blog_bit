@@ -156,9 +156,9 @@ def post(id):
     return render_template('main/post.html', posts=[post], form=form, comments=comments, pagination=pagination)
 
 
-@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@main.route('/edit-post/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit(id):
+def edit_post(id):
     post = Post.query.get_or_404(id)
 
     if current_user != post.author and not current_user.is_administrator():
@@ -222,7 +222,7 @@ def followers(username):
     user = User.query.filter_by(username=username).first_or_404()
 
     page = request.args.get('page', default=1, type=int)
-    pagination = user.followers.order_by(Follow.timestamp.desc()).paginate(
+    pagination = user.followers.filter(Follow.follower_id != user.id).order_by(Follow.timestamp.desc()).paginate(
         page=page,
         per_page=current_app.config['POSTS_PER_PAGE'],
     )
@@ -237,7 +237,8 @@ def following(username):
     user = User.query.filter_by(username=username).first_or_404()
 
     page = request.args.get('page', default=1, type=int)
-    pagination = user.followed.order_by(Follow.timestamp.desc()).paginate(
+    # Get followers excluding the user
+    pagination = user.followed.filter(Follow.followed_id != user.id).order_by(Follow.timestamp.desc()).paginate(
         page=page,
         per_page=current_app.config['POSTS_PER_PAGE'],
     )

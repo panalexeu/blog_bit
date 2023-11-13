@@ -65,6 +65,9 @@ class User(db.Model, UserMixin):
             else:
                 self.role = Role.query.filter_by(default=True).first()
 
+        # Following user to himself
+        self.follow(self)
+
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
