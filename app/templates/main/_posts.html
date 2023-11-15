@@ -18,10 +18,15 @@
             </div>
 
             <div class="post-content">
-                {% if post.body_html %}
-                    {{ post.body_html | safe }}
-                {% else %}
-                    {{ post.body }}
+                {% if post.disabled %}
+                    <i>This post has been disabled by a moderator.</i>
+                {% endif %}
+                {% if current_user.is_mod() or not post.disabled %}
+                    {% if post.body_html %}
+                        {{ post.body_html | safe }}
+                    {% else %}
+                        {{ post.body }}
+                    {% endif %}
                 {% endif %}
 
                 <div class="post-footer">

@@ -150,3 +150,6 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
+    def is_mod(self):
+        return False
