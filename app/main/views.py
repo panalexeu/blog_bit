@@ -272,7 +272,11 @@ def moderate_comment_enable(id):
     db.session.add(comment)
     db.session.commit()
 
-    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+    # if comment moderation was performed in post page and not moderate page
+    if 'post' in request.referrer:
+        return redirect(url_for('main.post', id=comment.post_id, page=request.args.get('page', default=1, type=int)))
+    else:
+        return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
 
 
 @main.route('/moderate-comment/disable/<int:id>')
@@ -285,7 +289,11 @@ def moderate_comment_disable(id):
     db.session.add(comment)
     db.session.commit()
 
-    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+    # if comment moderation was performed in post page and not moderate page
+    if 'post' in request.referrer:
+        return redirect(url_for('main.post', id=comment.post_id, page=request.args.get('page', default=1, type=int)))
+    else:
+        return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
 
 
 @main.route('/moderate-post/enable/<int:id>')

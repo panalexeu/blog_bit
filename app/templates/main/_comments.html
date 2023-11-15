@@ -22,16 +22,18 @@
                     <i>This comment has been disabled by a moderator.</i><br>
                 {% endif %}
 
-                {% if current_user.can(Permission.MODERATE) or not comment.disabled %}
+                {% if current_user.is_mod() or not comment.disabled %}
                     {{ comment.body_html | safe }}
                 {% endif %}
             </div>
 
-            {% if moderate %}
+            {% if current_user.is_mod() %}
                 <div class="post-footer">
-                    <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
-                        Post
-                    </a>
+                    {% if moderate %}
+                        <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
+                            Post
+                        </a>
+                    {% endif %}
 
                     {% if comment.disabled %}
                         <a class="btn btn-default"

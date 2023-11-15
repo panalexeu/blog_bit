@@ -9,6 +9,7 @@
 
 {% block page_content %}
     {% set moderate = True %}
+
     {% include 'main/_comments.html' %}
     <div class="pagination">
         {{ page_macros.pagination_widget(pagination, endpoint='.moderate') }}
