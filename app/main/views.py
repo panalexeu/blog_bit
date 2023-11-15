@@ -327,10 +327,11 @@ def moderate_post_disable(id):
 @admin_required
 def upgrade_to_mod(id):
     user = User.query.get_or_404(id)
+
     user.role = Role.query.filter_by(name='Moderator').first()
     db.session.commit()
 
-    flash('User profile has been upgraded to Moderator.', 'warning')
+    flash(f'User {user.username} has been upgraded to Moderator.', 'success')
 
     return redirect(url_for('main.profile', username=user.username))
 
@@ -340,10 +341,11 @@ def upgrade_to_mod(id):
 @admin_required
 def downgrade_mod(id):
     user = User.query.get_or_404(id)
+
     user.role = Role.query.filter_by(name='User').first()
     db.session.commit()
 
-    flash('User profile has been downgraded to User.', 'warning')
+    flash(f'User {user.username} has been downgraded to User.', 'success')
 
     return redirect(url_for('main.profile', username=user.username))
 
@@ -355,13 +357,13 @@ def disable_user(id):
     user = User.query.get_or_404(id)
 
     if user.is_mod():
-        flash('You are not allowed to disable moderators!', category='warning')
+        flash('You are not allowed to disable moderators!', category='error')
         return redirect(url_for('main.profile', username=user.username))
 
     user.role = Role.query.filter_by(name='Disabled').first()
     db.session.commit()
 
-    flash('User has been disabled.')
+    flash(f'User {user.username} has been disabled.', 'warning')
 
     return redirect(url_for('main.profile', username=user.username))
 
@@ -373,12 +375,12 @@ def enable_user(id):
     user = User.query.get_or_404(id)
 
     if user.is_mod():
-        flash('You are not allowed to disable moderators!', category='warning')
+        flash('You are not allowed to disable moderators!', category='error')
         return redirect(url_for('main.profile', username=user.username))
 
     user.role = Role.query.filter_by(name='User').first()
     db.session.commit()
 
-    flash('User has been enabled.')
+    flash(f'User {user.username} has been enabled.', category='warning')
 
     return redirect(url_for('main.profile', username=user.username))

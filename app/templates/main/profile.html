@@ -61,11 +61,11 @@
             {% endif %}
 
             <a href="{{ url_for('main.followers', username=user.username) }}">
-                Followers: <span class="badge">{{ user.followers.count() - 1}}</span>
+                Followers: <span class="badge">{{ user.followers.count() - 1 }}</span>
             </a>
 
             <a href="{{ url_for('main.following', username=user.username) }}">
-                Following: <span class="badge">{{ user.followed.count() - 1}}</span>
+                Following: <span class="badge">{{ user.followed.count() - 1 }}</span>
             </a>
 
             <a href="{{ url_for('main.profile', username=user.username) }}#profile_posts">
@@ -95,7 +95,7 @@
                 <span class="label label-warning">Administrator</span>
             {% elif user.is_mod() %}
                 <span class="label label-primary">Moderator</span>
-            {% elif user.is_disabled()%}
+            {% elif user.is_disabled() %}
                 <span class="label label-danger">Disabled</span>
             {% else %}
                 <span class="label label-info">User</span>
@@ -104,16 +104,16 @@
 
         {% if current_user.is_mod() %}
             {% if not user.is_mod() %}
-                <div class="post-disable">
+                <div class="profile-disable">
                     {% if user.is_disabled() %}
                         <a class="btn btn-default"
-                           href={{ url_for('main.disable_user', id=user.id) }}>
+                           href={{ url_for('main.enable_user', id=user.id) }}>
                             Enable
                         </a>
                     {% else %}
                         <a class="btn btn-danger"
-                           href={{ url_for('main.enable_user', id=user.id) }}>
-                            {{ user.is_disabled() }}
+                           href={{ url_for('main.disable_user', id=user.id) }}>
+                            Disable
                         </a>
                     {% endif %}
                 </div>

@@ -31,6 +31,14 @@ div.post-disable {
     float: right;
 }
 
+div.profile-disable {
+    float: right;
+}
+
+div.profile-comments {
+    margin-top: 8px;
+}
+
 div.post-thumbnail {
     position: absolute;
 }
