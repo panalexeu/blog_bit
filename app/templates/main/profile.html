@@ -95,10 +95,30 @@
                 <span class="label label-warning">Administrator</span>
             {% elif user.is_mod() %}
                 <span class="label label-primary">Moderator</span>
+            {% elif user.is_disabled()%}
+                <span class="label label-danger">Disabled</span>
             {% else %}
                 <span class="label label-info">User</span>
             {% endif %}
         </p>
+
+        {% if current_user.is_mod() %}
+            {% if not user.is_mod() %}
+                <div class="post-disable">
+                    {% if user.is_disabled() %}
+                        <a class="btn btn-default"
+                           href={{ url_for('main.disable_user', id=user.id) }}>
+                            Enable
+                        </a>
+                    {% else %}
+                        <a class="btn btn-danger"
+                           href={{ url_for('main.enable_user', id=user.id) }}>
+                            {{ user.is_disabled() }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 
     {% include 'main/_posts.html' %}

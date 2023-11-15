@@ -346,3 +346,39 @@ def downgrade_mod(id):
     flash('User profile has been downgraded to User.', 'warning')
 
     return redirect(url_for('main.profile', username=user.username))
+
+
+@main.route('/disable-user/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def disable_user(id):
+    user = User.query.get_or_404(id)
+
+    if user.is_mod():
+        flash('You are not allowed to disable moderators!', category='warning')
+        return redirect(url_for('main.profile', username=user.username))
+
+    user.role = Role.query.filter_by(name='Disabled').first()
+    db.session.commit()
+
+    flash('User has been disabled.')
+
+    return redirect(url_for('main.profile', username=user.username))
+
+
+@main.route('/enable-user/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def enable_user(id):
+    user = User.query.get_or_404(id)
+
+    if user.is_mod():
+        flash('You are not allowed to disable moderators!', category='warning')
+        return redirect(url_for('main.profile', username=user.username))
+
+    user.role = Role.query.filter_by(name='User').first()
+    db.session.commit()
+
+    flash('User has been enabled.')
+
+    return redirect(url_for('main.profile', username=user.username))

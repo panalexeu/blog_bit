@@ -77,6 +77,9 @@ class User(db.Model, UserMixin):
     def is_mod(self):
         return self.can(Permission.MODERATE)
 
+    def is_disabled(self):
+        return self.role.name == 'Disabled'
+
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -152,4 +155,7 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
     def is_mod(self):
+        return False
+
+    def is_disabled(self):
         return False
