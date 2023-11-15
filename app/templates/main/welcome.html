@@ -9,11 +9,11 @@
 {% endblock %}
 
 {% block page_content %}
-    <div>
-        {% if current_user.can(Permission.WRITE) %}
+    {% if current_user.can(Permission.WRITE) %}
+        <div>
             {{ wtf.quick_form(form) }}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 
     <div class="welcome-tabs">
         <ul class="nav nav-tabs">

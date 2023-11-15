@@ -26,6 +26,19 @@ div.post-date {
     float: right;
 }
 
+div.post-disable {
+    margin-top: 8px;
+    float: right;
+}
+
+div.profile-disable {
+    float: right;
+}
+
+div.profile-comments {
+    margin-top: 8px;
+}
+
 div.post-thumbnail {
     position: absolute;
 }
@@ -54,3 +67,4 @@ div.welcome-tabs {
 div.pagination {
     float: right;
 }
+

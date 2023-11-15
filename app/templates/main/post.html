@@ -5,15 +5,34 @@
 {% block title %} blog_bit - Post {% endblock %}
 
 {% block page_content %}
+    {% set post = posts[0] %}
+
     {% include 'main/_posts.html' %}
 
+    {% if current_user.is_mod() %}
+        <div class="post-disable">
+            {% if post.disabled %}
+                <a class="btn btn-default"
+                   href={{ url_for('main.moderate_post_enable', id=post.id) }}>
+                    Enable
+                </a>
+            {% else %}
+                <a class="btn btn-danger"
+                   href={{ url_for('main.moderate_post_disable', id=post.id) }}>
+                    Disable
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
     <h4>Comments</h4>
-    {% if current_user.can(Permission.WRITE) %}
+    {% if current_user.can(Permission.COMMENT) %}
         {{ wtf.quick_form(form) }}
     {% endif %}
 
     {% include 'main/_comments.html' %}
+
     <div class="pagination">
-        {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=posts[0].id) }}
+        {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=post.id) }}
     </div>
 {% endblock %}

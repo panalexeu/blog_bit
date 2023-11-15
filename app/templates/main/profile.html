@@ -35,52 +35,94 @@
             Last seen {{ moment(user.last_seen).fromNow() }}
         </p>
 
-        {% if current_user.can(Permission.FOLLOW) and user != current_user %}
-            {% if not current_user.is_following(user) %}
-                <a href="{{ url_for('main.follow', username=user.username) }}" class="btn btn-primary">
-                    Follow
-                </a>
-            {% else %}
-                <a href="{{ url_for('main.unfollow', username=user.username) }}" class="btn btn-default">
-                    Unfollow
-                </a>
+        <p>
+            {% if current_user.can(Permission.FOLLOW) and user != current_user %}
+                {% if not current_user.is_following(user) %}
+                    <a href="{{ url_for('main.follow', username=user.username) }}" class="btn btn-primary">
+                        Follow
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.unfollow', username=user.username) }}" class="btn btn-default">
+                        Unfollow
+                    </a>
+                {% endif %}
             {% endif %}
-        {% endif %}
 
-        <a href="{{ url_for('main.followers', username=user.username) }}">
-            Followers: <span class="badge">{{ user.followers.count() }}</span>
-        </a>
+            {% if current_user.is_administrator() and current_user != user %}
+                {% if user.is_mod() %}
+                    <a href="{{ url_for('main.downgrade_mod', id=user.id) }}" class="btn btn-default">Downgrade</a>
+                {% else %}
+                    <a href="{{ url_for('main.upgrade_to_mod', id=user.id) }}" class="btn btn-info">Upgrade</a>
+                {% endif %}
 
-        <a href="{{ url_for('main.following', username=user.username) }}">
-            Following: <span class="badge">{{ user.followed.count() }}</span>
-        </a>
-
-        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-            | <span class="label label-default">Follows you</span>
-        {% endif %}
-
-
-        {% if user == current_user %}
-            {% if current_user.is_administrator() %}
-                <a class="btn btn-danger btn-sm" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
+                <a class="btn btn-warning" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
                     Edit Profile [ADMIN]
                 </a>
-            {% else %}
-                <a class="btn btn-default btn-sm" href="{{ url_for('main.edit_profile') }}">
-                    Edit Profile
-                </a>
             {% endif %}
-        {% endif %}
 
-        {% if current_user.is_administrator() and current_user != user %}
-            <a class="btn btn-danger btn-sm" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
-                Edit Profile [ADMIN]
+            <a href="{{ url_for('main.followers', username=user.username) }}">
+                Followers: <span class="badge">{{ user.followers.count() - 1 }}</span>
             </a>
+
+            <a href="{{ url_for('main.following', username=user.username) }}">
+                Following: <span class="badge">{{ user.followed.count() - 1 }}</span>
+            </a>
+
+            <a href="{{ url_for('main.profile', username=user.username) }}#profile_posts">
+                Posts: <span class="badge">{{ user.posts.count() }}</span>
+            </a>
+
+
+            {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+                | <span class="label label-default">Follows you</span>
+            {% endif %}
+
+            {% if user == current_user %}
+                {% if current_user.is_administrator() %}
+                    <a class="btn btn-warning" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
+                        Edit Profile [ADMIN]
+                    </a>
+                {% else %}
+                    <a class="btn btn-default" href="{{ url_for('main.edit_profile') }}">
+                        Edit Profile
+                    </a>
+                {% endif %}
+            {% endif %}
+        </p>
+
+        <p>
+            {% if user.is_administrator() %}
+                <span class="label label-warning">Administrator</span>
+            {% elif user.is_mod() %}
+                <span class="label label-primary">Moderator</span>
+            {% elif user.is_disabled() %}
+                <span class="label label-danger">Disabled</span>
+            {% else %}
+                <span class="label label-info">User</span>
+            {% endif %}
+        </p>
+
+        {% if current_user.is_mod() %}
+            {% if not user.is_mod() %}
+                <div class="profile-disable">
+                    {% if user.is_disabled() %}
+                        <a class="btn btn-default"
+                           href={{ url_for('main.enable_user', id=user.id) }}>
+                            Enable
+                        </a>
+                    {% else %}
+                        <a class="btn btn-danger"
+                           href={{ url_for('main.disable_user', id=user.id) }}>
+                            Disable
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 
     {% include 'main/_posts.html' %}
-    <div class="pagination">
+    <div class="pagination" id="profile_posts">
         {{ page_macros.pagination_widget(pagination, endpoint='main.profile', username=user.username) }}
     </div>
 {% endblock %}

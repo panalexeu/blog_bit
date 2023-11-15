@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block navbar %}
-    <div class="navbar navbar-inverse">
+    <div class="navbar-inverse">
         <div class="container">
 
             <div class="navbar-header">
@@ -24,7 +24,7 @@
                         <li><a href={{ url_for('main.profile', username=current_user.username) }}>Profile</a></li>
                     {% endif %}
                     {% if current_user.can(Permission.MODERATE) %}
-                        <li><a href={{ url_for('main.moderate') }}>Moderate Comments</a></li>
+                        <li><a href={{ url_for('main.moderate') }}>Moderate</a></li>
                     {% endif %}
                 </ul>
 
@@ -53,22 +53,23 @@
 
 {% block content %}
     <div class="container">
-        {% for category, message in get_flashed_messages(with_categories=True) %}
-            {% if category == 'success' %}
-                {% set alert_type = "alert alert-success" %}
-            {% elif category == 'warning' %}
-                {% set alert_type = "alert alert-warning" %}
-            {% elif category == 'error' %}
-                {% set alert_type = "alert alert-danger" %}
-            {% endif %}
-
-            <div class="{{ alert_type }}">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-
         <div class="page-header">
+            {# Flashed messages handling #}
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+                {% if category == 'success' %}
+                    {% set alert_type = "alert alert-success" %}
+                {% elif category == 'warning' %}
+                    {% set alert_type = "alert alert-warning" %}
+                {% elif category == 'error' %}
+                    {% set alert_type = "alert alert-danger" %}
+                {% endif %}
+
+                <div class="{{ alert_type }}">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
             {% block page_header %}{% endblock %}
         </div>
         {% block page_content %}{% endblock %}

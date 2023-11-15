@@ -65,11 +65,20 @@ class User(db.Model, UserMixin):
             else:
                 self.role = Role.query.filter_by(default=True).first()
 
+        # Following user to himself
+        self.follow(self)
+
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
+
+    def is_mod(self):
+        return self.can(Permission.MODERATE)
+
+    def is_disabled(self):
+        return self.role.name == 'Disabled'
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -126,6 +135,13 @@ class User(db.Model, UserMixin):
             db.session.delete(follow)
             db.session.commit()
 
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.commit()
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -136,4 +152,10 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
     def is_administrator(self):
+        return False
+
+    def is_mod(self):
+        return False
+
+    def is_disabled(self):
         return False
