@@ -26,6 +26,11 @@ div.post-date {
     float: right;
 }
 
+div.post-disable {
+    margin-top: 16px;
+    float: right;
+}
+
 div.post-thumbnail {
     position: absolute;
 }
@@ -55,4 +60,3 @@ div.pagination {
     float: right;
 }
 
-/*div.flash*/

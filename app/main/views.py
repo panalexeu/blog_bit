@@ -25,7 +25,7 @@ def welcome():
 
     # if showing posts of only followed users set
     show_followed = request.cookies.get('show_followed')
-    if show_followed:
+    if show_followed and current_user.is_authenticated:
         query = current_user.followed_posts
     else:
         query = Post.query
@@ -262,10 +262,10 @@ def moderate():
     return render_template('main/moderate.html', comments=comments, page=page, pagination=pagination)
 
 
-@main.route('/moderate/enable/<int:id>')
+@main.route('/moderate-comment/enable/<int:id>')
 @login_required
 @permission_required(Permission.MODERATE)
-def moderate_enable(id):
+def moderate_comment_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
 
@@ -275,10 +275,10 @@ def moderate_enable(id):
     return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
 
 
-@main.route('/moderate/disable/<int:id>')
+@main.route('/moderate-comment/disable/<int:id>')
 @login_required
 @permission_required(Permission.MODERATE)
-def moderate_disable(id):
+def moderate_comment_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
 
@@ -288,6 +288,32 @@ def moderate_disable(id):
     return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
 
 
+@main.route('/moderate-post/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_post_enable(id):
+    post = Post.query.get_or_404(id)
+    post.disabled = False
+
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(url_for('main.post', id=post.id))
+
+
+@main.route('/moderate-post/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_post_disable(id):
+    post = Post.query.get_or_404(id)
+    post.disabled = True
+
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(url_for('main.post', id=post.id))
+
+
 @main.route('/upgrade-to-mod/<int:id>')
 @login_required
 @admin_required
@@ -295,6 +321,8 @@ def upgrade_to_mod(id):
     user = User.query.get_or_404(id)
     user.role = Role.query.filter_by(name='Moderator').first()
     db.session.commit()
+
+    flash('User profile has been upgraded to Moderator.', 'warning')
 
     return redirect(url_for('main.profile', username=user.username))
 
@@ -306,5 +334,7 @@ def downgrade_mod(id):
     user = User.query.get_or_404(id)
     user.role = Role.query.filter_by(name='User').first()
     db.session.commit()
+
+    flash('User profile has been downgraded to User.', 'warning')
 
     return redirect(url_for('main.profile', username=user.username))

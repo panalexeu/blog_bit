@@ -132,6 +132,13 @@ class User(db.Model, UserMixin):
             db.session.delete(follow)
             db.session.commit()
 
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.commit()
+
     def __repr__(self):
         return f'<User {self.username}>'
 

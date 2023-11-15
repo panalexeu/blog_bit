@@ -30,9 +30,7 @@
                     </a>
 
                     <a href="{{ url_for('main.post', id=post.id) }}#comments">
-                        <span class="label label-primary">
-                            {{ post.comments.count() }} Comments
-                        </span>
+                        <span class="label label-primary">{{ post.comments.count() }} Comments</span>
                     </a>
 
                     {% if current_user == post.author %}
@@ -40,8 +38,8 @@
                             <span class="label label-info">Edit</span>
                         </a>
                     {% elif current_user.is_administrator() %}
-                        <a href="{{ url_for('main.edit', id=post.id) }}">
-                            <span class="label label-danger">Edit [ADMIN]</span>
+                        <a href="{{ url_for('main.edit_post', id=post.id) }}">
+                            <span class="label label-warning">Edit [ADMIN]</span>
                         </a>
                     {% endif %}
                 </div>

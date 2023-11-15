@@ -55,7 +55,7 @@
                     <a href="{{ url_for('main.upgrade_to_mod', id=user.id) }}" class="btn btn-info">Upgrade</a>
                 {% endif %}
 
-                <a class="btn btn-danger" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
+                <a class="btn btn-warning" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
                     Edit Profile [ADMIN]
                 </a>
             {% endif %}
@@ -79,7 +79,7 @@
 
             {% if user == current_user %}
                 {% if current_user.is_administrator() %}
-                    <a class="btn btn-danger" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
+                    <a class="btn btn-warning" href="{{ url_for('main.edit_profile_admin', id=user.id) }}">
                         Edit Profile [ADMIN]
                     </a>
                 {% else %}

@@ -35,12 +35,12 @@
 
                     {% if comment.disabled %}
                         <a class="btn btn-default"
-                           href={{ url_for('main.moderate_enable', id=comment.id, page=page) }}>
+                           href={{ url_for('main.moderate_comment_enable', id=comment.id, page=page) }}>
                             Enable
                         </a>
                     {% else %}
                         <a class="btn btn-danger"
-                           href={{ url_for('main.moderate_disable', id=comment.id, page=page) }}>
+                           href={{ url_for('main.moderate_comment_disable', id=comment.id, page=page) }}>
                             Disable
                         </a>
                     {% endif %}
