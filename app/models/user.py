@@ -47,6 +47,10 @@ class User(db.Model, UserMixin):
         return Post.query.join(Follow, Follow.followed_id == Post.author_id).filter_by(follower_id=self.id)
 
     @property
+    def liked_posts(self):
+        return Post.query.join(Like, Like.post_id == Post.id).filter_by(user_id=self.id)
+
+    @property
     def password(self):
         raise AttributeError('Password is not a readable attribute!')
 

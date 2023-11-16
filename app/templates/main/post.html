@@ -6,7 +6,7 @@
 
 {% block page_content %}
     {% set post = posts[0] %}
-
+    {% set post_page = True %}
     {% include 'main/components/_posts.html' %}
 
     {% if current_user.is_mod() %}

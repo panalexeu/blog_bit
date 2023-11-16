@@ -24,9 +24,14 @@ def welcome():
         return redirect(url_for('main.welcome'))
 
     # if showing posts of only followed users set
-    show_followed = request.cookies.get('show_followed')
-    if show_followed and current_user.is_authenticated:
-        query = current_user.followed_posts
+    show_post = request.cookies.get('show_post')
+    if current_user.is_authenticated:
+        if show_post == 'followed':
+            query = current_user.followed_posts
+        elif show_post == 'liked':
+            query = current_user.liked_posts
+        else:
+            query = Post.query
     else:
         query = Post.query
 
@@ -39,13 +44,13 @@ def welcome():
     posts = pagination.items
 
     return render_template('main/welcome.html', form=form, posts=posts, pagination=pagination,
-                           show_followed=show_followed)
+                           show_post=show_post)
 
 
 @main.route('/all')
 def show_all():
     response = make_response(redirect(url_for('main.welcome')))
-    response.set_cookie('show_followed', '', max_age=60 * 60 * 24 * 30)  # max age of cookie is set for 30 days
+    response.set_cookie('show_post', '', max_age=60 * 60 * 24 * 30)  # max age of cookie is set for 30 days
     return response
 
 
@@ -53,7 +58,15 @@ def show_all():
 @login_required
 def show_followed():
     response = make_response(redirect(url_for('main.welcome')))
-    response.set_cookie('show_followed', '1', max_age=60 * 60 * 24 * 30)
+    response.set_cookie('show_post', 'followed', max_age=60 * 60 * 24 * 30)
+    return response
+
+
+@main.route('/liked')
+@login_required
+def show_liked():
+    response = make_response(redirect(url_for('main.welcome')))
+    response.set_cookie('show_post', 'liked', max_age=60 * 60 * 24 * 30)
     return response
 
 

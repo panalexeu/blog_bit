@@ -17,12 +17,16 @@
 
     <div class="welcome-tabs">
         <ul class="nav nav-tabs">
-            <li {% if not show_followed %}class="active"{% endif %}>
+            <li {% if not show_post %}class="active"{% endif %}>
                 <a href="{{ url_for('main.show_all') }}">All</a>
             </li>
 
-            <li {% if show_followed == '1' %}class="active"{% endif %}>
+            <li {% if show_post == 'followed' %}class="active"{% endif %}>
                 <a href="{{ url_for('main.show_followed') }}">Followed</a>
+            </li>
+
+            <li {% if show_post =='liked' %}class="active"{% endif %}>
+                <a href="{{ url_for('main.show_liked') }}">Liked</a>
             </li>
         </ul>
     </div>
