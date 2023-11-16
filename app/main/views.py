@@ -3,7 +3,7 @@ from flask import render_template, abort, flash, make_response, redirect, url_fo
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
-from ..models import User, Role, Post, Permission, Follow, Comment
+from ..models import User, Role, Post, Permission, Follow, Comment, Like
 from .. import db
 from ..decorators import admin_required, permission_required
 
@@ -384,3 +384,20 @@ def enable_user(id):
     flash(f'User {user.username} has been enabled.', category='warning')
 
     return redirect(url_for('main.profile', username=user.username))
+
+
+@main.route('/like-post/<int:id>')
+@login_required
+def like_post(id):
+    post = Post.query.get_or_404(id)
+
+    like = Like(
+        user=current_user._get_current_object(),
+        post=post
+    )
+
+    db.session.add(like)
+    db.session.commit()
+
+    return redirect(url_for('main.post', id=post.id))
+

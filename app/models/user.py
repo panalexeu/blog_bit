@@ -124,6 +124,9 @@ class User(db.Model, UserMixin):
     def is_followed_by(self, user):
         return self.followers.filter_by(follower_id=user.id).first() is not None
 
+    def is_liking(self, post_id):
+        return self.likes.filter_by()
+
     def follow(self, user):
         if not self.is_following(user):
             follow = Follow(follower=self, followed=user)

@@ -47,6 +47,11 @@
                             <span class="label label-warning">Edit [ADMIN]</span>
                         </a>
                     {% endif %}
+
+                    {% if current_user.can(Permission.LIKE) %}
+
+                        <span class="glyphicon glyphicon-heart-empty"></span>
+                    {% endif %}
                 </div>
             </div>
         </li>

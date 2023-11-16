@@ -30,10 +30,10 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'Disabled': [Permission.FOLLOW],
-            'User': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT],
-            'Moderator': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT, Permission.MODERATE],
-            'Administrator': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT, Permission.MODERATE,
+            'Disabled': [Permission.FOLLOW, Permission.LIKE],
+            'User': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT, Permission.LIKE],
+            'Moderator': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT, Permission.LIKE, Permission.MODERATE],
+            'Administrator': [Permission.FOLLOW, Permission.WRITE, Permission.COMMENT, Permission.LIKE, Permission.MODERATE,
                               Permission.ADMIN],
         }
 
@@ -53,7 +53,8 @@ class Role(db.Model):
 
 class Permission:
     FOLLOW = 1
-    COMMENT = 2
-    WRITE = 4
-    MODERATE = 8
-    ADMIN = 16
+    LIKE = 2
+    COMMENT = 4
+    WRITE = 8
+    MODERATE = 16
+    ADMIN = 32
