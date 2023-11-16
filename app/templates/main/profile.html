@@ -121,8 +121,11 @@
         {% endif %}
     </div>
 
-    {% include 'main/_posts.html' %}
-    <div class="pagination" id="profile_posts">
+    <div class="posts-profile" id="profile_posts">
+        {% include 'main/_posts.html' %}
+    </div>
+
+    <div class="pagination">
         {{ page_macros.pagination_widget(pagination, endpoint='main.profile', username=user.username) }}
     </div>
 {% endblock %}

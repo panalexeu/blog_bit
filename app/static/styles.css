@@ -27,7 +27,6 @@ div.post-date {
 }
 
 div.post-disable {
-    margin-top: 8px;
     float: right;
 }
 
@@ -66,5 +65,9 @@ div.welcome-tabs {
 
 div.pagination {
     float: right;
+}
+
+div.posts-profile {
+    margin-top: 48px;
 }
 
