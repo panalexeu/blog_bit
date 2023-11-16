@@ -49,8 +49,15 @@
                     {% endif %}
 
                     {% if current_user.can(Permission.LIKE) %}
-
-                        <span class="glyphicon glyphicon-heart-empty"></span>
+                        {% if current_user.is_liking(post) %}
+                            <a href="{{ url_for('main.unlike_post', id=post.id) }}">
+                                <span class="glyphicon glyphicon-heart"/>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('main.like_post', id=post.id) }}">
+                                <span class="glyphicon glyphicon-heart-empty"/>
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>

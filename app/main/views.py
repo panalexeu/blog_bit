@@ -388,16 +388,17 @@ def enable_user(id):
 
 @main.route('/like-post/<int:id>')
 @login_required
+@permission_required(Permission.LIKE)
 def like_post(id):
     post = Post.query.get_or_404(id)
-
-    like = Like(
-        user=current_user._get_current_object(),
-        post=post
-    )
-
-    db.session.add(like)
-    db.session.commit()
-
+    current_user.like(post)
     return redirect(url_for('main.post', id=post.id))
 
+
+@main.route('/unlike-post/<int:id>')
+@login_required
+@permission_required(Permission.LIKE)
+def unlike_post(id):
+    post = Post.query.get_or_404(id)
+    current_user.unlike(post)
+    return redirect(url_for('main.post', id=post.id))

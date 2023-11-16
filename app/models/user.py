@@ -9,6 +9,7 @@ from app import db
 from .follow import Follow
 from .post import Post
 from .role import Permission, Role
+from .like import Like
 
 
 class User(db.Model, UserMixin):
@@ -124,9 +125,6 @@ class User(db.Model, UserMixin):
     def is_followed_by(self, user):
         return self.followers.filter_by(follower_id=user.id).first() is not None
 
-    def is_liking(self, post_id):
-        return self.likes.filter_by()
-
     def follow(self, user):
         if not self.is_following(user):
             follow = Follow(follower=self, followed=user)
@@ -135,8 +133,24 @@ class User(db.Model, UserMixin):
 
     def unfollow(self, user):
         follow = self.followed.filter_by(followed_id=user.id).first()
+
         if follow:
             db.session.delete(follow)
+            db.session.commit()
+
+    def is_liking(self, post):
+        return self.likes.filter_by(post_id=post.id).first() is not None
+
+    def like(self, post):
+        like = Like(user=self,post=post)
+        db.session.add(like)
+        db.session.commit()
+
+    def unlike(self, post):
+        like = self.likes.filter_by(post_id=post.id).first()
+
+        if like:
+            db.session.delete(like)
             db.session.commit()
 
     @staticmethod
