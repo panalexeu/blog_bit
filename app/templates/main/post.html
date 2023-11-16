@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% import 'main/_pagination_macros.html' as page_macros %}
+{% import 'main/components/_pagination_macros.html' as page_macros %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %} blog_bit - Post {% endblock %}
@@ -7,7 +7,7 @@
 {% block page_content %}
     {% set post = posts[0] %}
 
-    {% include 'main/_posts.html' %}
+    {% include 'main/components/_posts.html' %}
 
     {% if current_user.is_mod() %}
         <div class="post-disable">
@@ -30,7 +30,7 @@
         {{ wtf.quick_form(form) }}
     {% endif %}
 
-    {% include 'main/_comments.html' %}
+    {% include 'main/components/_comments.html' %}
 
     <div class="pagination">
         {{ page_macros.pagination_widget(pagination, endpoint='main.post', id=post.id) }}

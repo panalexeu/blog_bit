@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% import 'main/_pagination_macros.html' as page_macros %}
+{% import 'main/components/_pagination_macros.html' as page_macros %}
 
 {% block title %} blog_bit - Comment Moderation {% endblock %}
 
@@ -10,7 +10,7 @@
 {% block page_content %}
     {% set moderate = True %}
 
-    {% include 'main/_comments.html' %}
+    {% include 'main/components/_comments.html' %}
     <div class="pagination">
         {{ page_macros.pagination_widget(pagination, endpoint='.moderate') }}
     </div>

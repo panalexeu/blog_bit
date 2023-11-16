@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
-{% import 'main/_pagination_macros.html' as page_macros %}
+{% import 'main/components/_pagination_macros.html' as page_macros %}
 
 
 {% block page_header %}
@@ -27,7 +27,7 @@
         </ul>
     </div>
 
-    {% include 'main/_posts.html' %}
+    {% include 'main/components/_posts.html' %}
     <div class="pagination">
         {{ page_macros.pagination_widget(pagination, endpoint='main.welcome') }}
     </div>

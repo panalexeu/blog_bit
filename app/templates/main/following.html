@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% import 'main/_pagination_macros.html' as page_macros %}
+{% import 'main/components/_pagination_macros.html' as page_macros %}
 
 {% block page_header %}
     <h1>{{ user.username }} follows</h1>
 {% endblock %}
 
 {% block page_content %}
-    {% include 'main/_follows.html' %}
+    {% include 'main/components/_follows.html' %}
     {{ page_macros.pagination_widget(pagination, endpoint='main.following', username=user.username) }}
 {% endblock %}

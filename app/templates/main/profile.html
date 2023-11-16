@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% import 'main/_pagination_macros.html' as page_macros %}
+{% import 'main/components/_pagination_macros.html' as page_macros %}
 
 {% block title %} blog_bit - {{ user.username }} {% endblock %}
 
@@ -122,7 +122,7 @@
     </div>
 
     <div class="posts-profile" id="profile_posts">
-        {% include 'main/_posts.html' %}
+        {% include 'main/components/_posts.html' %}
     </div>
 
     <div class="pagination">
