@@ -48,7 +48,7 @@ class User(db.Model, UserMixin):
 
     @property
     def liked_posts(self):
-        return Post.query.join(Like, Like.post_id == Post.id).filter_by(user_id=self.id)
+        return Post.query.join(Like, Like.post_id == Post.id).filter_by(user_id=self.id).order_by(Like.timestamp.desc())
 
     @property
     def password(self):
@@ -146,7 +146,7 @@ class User(db.Model, UserMixin):
         return self.likes.filter_by(post_id=post.id).first() is not None
 
     def like(self, post):
-        like = Like(user=self,post=post)
+        like = Like(user=self, post=post)
         db.session.add(like)
         db.session.commit()
 

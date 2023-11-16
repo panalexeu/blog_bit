@@ -35,7 +35,11 @@
                     </a>
 
                     <a href="{{ url_for('main.post', id=post.id) }}#comments">
-                        <span class="label label-primary">{{ post.comments.count() }} Comments</span>
+                        <span class="label label-success">{{ post.comments.count() }} Comments</span>
+                    </a>
+
+                    <a href="{{ url_for('main.post', id=post.id) }}">
+                        <span class="label label-primary">{{ post.likes.count() }} Likes</span>
                     </a>
 
                     {% if current_user == post.author %}
