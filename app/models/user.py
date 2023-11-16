@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    likes = db.relationship('Like', backref='user', lazy='dynamic')
     followed = db.relationship(
         'Follow',
         foreign_keys=[Follow.follower_id],
