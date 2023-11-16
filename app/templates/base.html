@@ -62,6 +62,8 @@
                     {% set alert_type = "alert alert-warning" %}
                 {% elif category == 'error' %}
                     {% set alert_type = "alert alert-danger" %}
+                {% else %}
+                    {% set alert_type = "alert alert-warning" %}
                 {% endif %}
 
                 <div class="{{ alert_type }}">
