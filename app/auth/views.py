@@ -51,6 +51,7 @@ def register():
             password=form.password.data
         )
         db.session.add(user)
+        user.follow(user)  # making user follow himself
         db.session.commit()
 
         # Confirmation token generation and email sending

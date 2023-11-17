@@ -27,13 +27,11 @@
                 {% endif %}
             </div>
 
-            {% if current_user.is_mod() %}
+            {% if current_user.is_mod() and moderate%}
                 <div class="post-footer">
-                    {% if moderate %}
-                        <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
-                            Post
-                        </a>
-                    {% endif %}
+                    <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
+                        Post
+                    </a>
 
                     {% if comment.disabled %}
                         <a class="btn btn-default"

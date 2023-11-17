@@ -12,7 +12,10 @@ class LoginForm(FlaskForm):
         vl.Length(1, 64),
         vl.Email(),
     ])
-    password = PasswordField('Password', validators=[vl.DataRequired()])
+    password = PasswordField('Password', validators=[
+        vl.DataRequired(),
+        vl.Length(1, 64)
+    ])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
 
@@ -32,6 +35,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[
         vl.DataRequired(),
         vl.EqualTo('password2', 'Passwords must match.'),
+        vl.Length(1, 64)
     ])
     password2 = PasswordField('Confirm password', validators=[vl.DataRequired()])
     submit = SubmitField('Register')
