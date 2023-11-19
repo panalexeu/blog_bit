@@ -35,8 +35,12 @@ def login():
 @flask_login.login_required
 def logout():
     flask_login.logout_user()
+
+    response = flask.make_response(flask.redirect(flask.url_for('main.welcome')))
+    response.set_cookie('show_post', '', max_age=60 * 60 * 24 * 30)  # logged out user should see only main posts (max_age of cookie is 30 days)
+
     flask.flash('You have been logged out.', 'success')
-    return flask.redirect(flask.url_for('main.welcome'))
+    return response
 
 
 @auth.route('/register', methods=['GET', 'POST'])
