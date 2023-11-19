@@ -52,19 +52,49 @@
                         </a>
                     {% endif %}
 
-                    {% if post_page %}
-                        {% if current_user.can(Permission.LIKE) %}
-                            {% if current_user.is_liking(post) %}
-                                <a href="{{ url_for('main.unlike_post', id=post.id) }}">
-                                    <span class="glyphicon glyphicon-heart"></span>
-                                </a>
-                            {% else %}
-                                <a href="{{ url_for('main.like_post', id=post.id) }}">
-                                    <span class="glyphicon glyphicon-heart-empty"></span>
-                                </a>
-                            {% endif %}
-                        {% endif %}
+
+                    {% if current_user.can(Permission.LIKE) %}
+                        {% set is_liked = current_user.is_liking(post) %}
+
+                         <a id="like-unlike-container-{{ post.id }}"></a>
+
+                        {# Implementing reactivity with preact #}
+                        <script type="module">
+                            import { html, render, useState } from 'https://esm.sh/htm/preact/standalone';
+
+                            const LikeUnlikeButton = ({ postId, isLiked }) => {
+                                const [liked, setLiked] = useState(isLiked === 'True');
+
+                                const likePost = async () => {
+                                    const response = await fetch(`/like-post/${postId}`, { method: 'GET' });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        setLiked(true);
+                                    }
+                                };
+
+                                const unlikePost = async () => {
+                                    const response = await fetch(`/unlike-post/${postId}`, { method: 'GET' });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        setLiked(false);
+                                    }
+                                };
+
+                                return html`
+                                    <a onClick=${liked ? unlikePost : likePost}>
+                                       <span class=${`glyphicon ${liked ? 'glyphicon-heart' : 'glyphicon-heart-empty'}`}></span>
+                                    </a>
+                                `;
+                            };
+
+                            render(
+                                html`<${LikeUnlikeButton} postId="{{ post.id }}" isLiked="{{ current_user.is_liking(post) }}" />`,
+                                document.getElementById(`like-unlike-container-{{post.id}}`)
+                            );
+                        </script>
                     {% endif %}
+
                 </div>
             </div>
         </li>

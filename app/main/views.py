@@ -1,5 +1,5 @@
 from flask_login import login_required, current_user
-from flask import render_template, abort, flash, make_response, redirect, url_for, request, current_app
+from flask import render_template, abort, flash, make_response, redirect, url_for, request, current_app, jsonify
 
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
@@ -397,7 +397,7 @@ def enable_user(id):
 def like_post(id):
     post = Post.query.get_or_404(id)
     current_user.like(post)
-    return redirect(url_for('main.post', id=post.id))
+    return jsonify({'success': True})
 
 
 @main.route('/unlike-post/<int:id>')
@@ -406,4 +406,12 @@ def like_post(id):
 def unlike_post(id):
     post = Post.query.get_or_404(id)
     current_user.unlike(post)
-    return redirect(url_for('main.post', id=post.id))
+    return jsonify({'success': True})
+
+
+@main.route('/preact_test')
+@login_required
+@permission_required(Permission.ADMIN)
+def preact_test():
+    return render_template('main/preact_test.html')
+

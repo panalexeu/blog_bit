@@ -39,6 +39,9 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href={{ url_for('main.edit_profile') }}> Edit Profile</a></li>
+                                {% if current_user.is_administrator() %}
+                                    <li><a href={{ url_for('main.preact_test') }}>Preact test</a></li>
+                                {% endif %}
                                 <li><a href={{ url_for('auth.logout') }}>Logout</a></li>
                             </ul>
                         </li>
@@ -81,4 +84,7 @@
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
+{% endblock %}
+
+{% block preact_script %}
 {% endblock %}

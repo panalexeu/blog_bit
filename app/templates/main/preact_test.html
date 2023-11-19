@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block page_header %}
+    <h1>Preact test</h1>
+{% endblock %}
+
+{% block page_content %}
+    <p id="counter"></p>
+
+    {% block preact_script %}
+        <script type="module">
+            import {html, render, useState} from 'https://esm.sh/htm/preact/standalone';
+
+            function Counter() {
+                const [num, setNum] = useState(0);
+
+                const incr = () => {
+                    setNum(num + 1);
+                };
+
+                const decr = () => {
+                    setNum(num - 1);
+                };
+
+                return html`
+                    <input type="text" name="counter" value=${num}/>
+                    <button onclick=${incr}>+</button>
+                    <button onclick=${decr}>-</button>
+                `;
+            }
+
+            render(html`<${Counter}/>`, document.getElementById('counter'));
+        </script>
+    {% endblock %}
+{% endblock %}
+
