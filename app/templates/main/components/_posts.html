@@ -34,14 +34,6 @@
                         <span class="label label-default">Get post</span>
                     </a>
 
-                    <a href="{{ url_for('main.post', id=post.id) }}#comments">
-                        <span class="label label-success">{{ post.comments.count() }} Comments</span>
-                    </a>
-
-                    <a href="{{ url_for('main.post', id=post.id) }}">
-                        <span class="label label-primary">{{ post.likes.count() }} Likes</span>
-                    </a>
-
                     {% if current_user == post.author %}
                         <a href="{{ url_for('main.edit_post', id=post.id) }}">
                             <span class="label label-info">Edit</span>
@@ -52,24 +44,35 @@
                         </a>
                     {% endif %}
 
+                    <a href="{{ url_for('main.post', id=post.id) }}#comments">
+                        <span class="label label-success">{{ post.comments.count() }} Comments</span>
+                    </a>
+
+                    {% if not current_user.can(Permission.LIKE) %}
+                        <a href="{{ url_for('main.post', id=post.id) }}">
+                            <span class="label label-primary">{{ post.likes.count() }} Likes</span>
+                        </a>
+                    {% endif %}
 
                     {% if current_user.can(Permission.LIKE) %}
                         {% set is_liked = current_user.is_liking(post) %}
 
-                         <a id="like-unlike-container-{{ post.id }}"></a>
+                         <span id="like-unlike-container-{{ post.id }}"></span>
 
                         {# Implementing reactivity with preact #}
                         <script type="module">
                             import { html, render, useState } from 'https://esm.sh/htm/preact/standalone';
 
-                            const LikeUnlikeButton = ({ postId, isLiked }) => {
+                            const LikeUnlikeButton = ({ postId, isLiked, likesCount }) => {
                                 const [liked, setLiked] = useState(isLiked === 'True');
+                                const [likesPreact, setLikesPreactCount] = useState(parseInt(likesCount, 10));
 
                                 const likePost = async () => {
                                     const response = await fetch(`/like-post/${postId}`, { method: 'GET' });
                                     const data = await response.json();
                                     if (data.success) {
                                         setLiked(true);
+                                        setLikesPreactCount(likesPreact + 1);
                                     }
                                 };
 
@@ -78,10 +81,15 @@
                                     const data = await response.json();
                                     if (data.success) {
                                         setLiked(false);
+                                        setLikesPreactCount(likesPreact - 1);
                                     }
                                 };
 
                                 return html`
+                                    <a href="{{ url_for('main.post', id=post.id) }}">
+                                        <span class="label label-primary">${likesPreact} Likes</span>
+                                    </a>
+
                                     <a onClick=${liked ? unlikePost : likePost}>
                                        <span class=${`glyphicon ${liked ? 'glyphicon-heart' : 'glyphicon-heart-empty'}`}></span>
                                     </a>
@@ -89,8 +97,8 @@
                             };
 
                             render(
-                                html`<${LikeUnlikeButton} postId="{{ post.id }}" isLiked="{{ current_user.is_liking(post) }}" />`,
-                                document.getElementById(`like-unlike-container-{{post.id}}`)
+                                html`<${LikeUnlikeButton} postId="{{ post.id }}" isLiked="{{ current_user.is_liking(post) }}" likesCount="{{ post.likes.count() }}" />`,
+                                document.getElementById(`like-unlike-container-{{ post.id }}`)
                             );
                         </script>
                     {% endif %}
