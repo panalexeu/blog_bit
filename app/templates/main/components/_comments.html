@@ -27,23 +27,62 @@
                 {% endif %}
             </div>
 
-            {% if current_user.is_mod() and moderate%}
+            {% if current_user.is_mod() and moderate %}
                 <div class="post-footer">
                     <a class="btn btn-primary" href="{{ url_for('main.post', id=comment.post_id) }}#comments">
                         Post
                     </a>
 
-                    {% if comment.disabled %}
-                        <a class="btn btn-default"
-                           href={{ url_for('main.moderate_comment_enable', id=comment.id, page=page) }}>
-                            Enable
-                        </a>
-                    {% else %}
-                        <a class="btn btn-danger"
-                           href={{ url_for('main.moderate_comment_disable', id=comment.id, page=page) }}>
-                            Disable
-                        </a>
-                    {% endif %}
+                    <a id="enable-disable-container-{{ comment.id }}"></a>
+
+                    {# Implementing reactivity with preact #}
+                    <script type='module'>
+                        import { html, render, useState } from 'https://esm.sh/htm/preact/standalone';
+
+                        const EnableDisableButton = ({ commentId, isEnabled }) => {
+                            const [enabled, setEnabled] = useState(isEnabled === 'True');
+
+                            const enablePost = async () => {
+                                const response = await fetch(`/moderate-comment/enable/${commentId}`, {method: 'GET'});
+                                const data = await response.json();
+                                if (data.success) {
+                                    setEnabled(true);
+                                }
+                            };
+
+                            const disablePost = async () => {
+                                const response = await fetch(`/moderate-comment/disable/${commentId}`, {method: 'GET'});
+                                const data = await response.json();
+                                if (data.success) {
+                                    setEnabled(false);
+                                }
+                            };
+
+                            return html`
+                                <button onClick=${enabled ? disablePost : enablePost} class=${enabled ? 'btn btn-danger' : 'btn btn-default'}>
+                                    ${enabled ? 'Disable' : 'Enable'}
+                                </button>
+                            `;
+                        };
+
+                        render(
+                            html`<${EnableDisableButton} commentId="{{ comment.id }}" isEnabled="{{ not comment.disabled }}"/>`,
+                            document.getElementById(`enable-disable-container-{{ comment.id }}`)
+                        );
+
+                    </script>
+
+{#                    {% if comment.disabled %}#}
+{#                        <a class="btn btn-default"#}
+{#                           href={{ url_for('main.moderate_comment_enable', id=comment.id, page=page) }}>#}
+{#                            Enable#}
+{#                        </a>#}
+{#                    {% else %}#}
+{#                        <a class="btn btn-danger"#}
+{#                           href={{ url_for('main.moderate_comment_disable', id=comment.id, page=page) }}>#}
+{#                            Disable#}
+{#                        </a>#}
+{#                    {% endif %}#}
                 </div>
             {% endif %}
         </li>

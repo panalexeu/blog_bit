@@ -282,10 +282,10 @@ def moderate_comment_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
 
-    db.session.add(comment)
+    # db.session.add(comment)
     db.session.commit()
 
-    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+    return jsonify({'success': True})
 
 
 @main.route('/moderate-comment/disable/<int:id>')
@@ -295,10 +295,10 @@ def moderate_comment_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
 
-    db.session.add(comment)
+    # db.session.add(comment)
     db.session.commit()
 
-    return redirect(url_for('main.moderate', page=request.args.get('page', default=1, type=int)))
+    return jsonify({'success': True})
 
 
 @main.route('/moderate-post/enable/<int:id>')
