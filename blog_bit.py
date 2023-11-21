@@ -46,3 +46,10 @@ def test(coverage):
         COV.html_report(directory=covdir)
         print('HTML version: file:\\\\%s\\index.html' % covdir)
         COV.erase()
+
+
+@app.cli.command()
+def init():
+    db.create_all()
+
+    Role.insert_roles()
