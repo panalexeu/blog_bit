@@ -62,7 +62,8 @@ class User(db.Model, UserMixin):
         super().__init__(**kwargs)
 
         # Pfp hash generating
-        self.pfp_hash = self.generate_pfp_hash()
+        if self.email:
+            self.pfp_hash = self.generate_pfp_hash()
 
         # Role assigning
         if self.role is None:
