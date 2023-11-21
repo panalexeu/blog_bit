@@ -1,5 +1,6 @@
 from flask import render_template, make_response, redirect, url_for, request, current_app
 from flask_login import login_required, current_user
+from flask_sqlalchemy.record_queries import get_recorded_queries
 
 from . import main
 from .forms import PostForm
@@ -75,3 +76,15 @@ def show_liked():
 @permission_required(Permission.ADMIN)
 def preact_test():
     return render_template('main/preact_test.html')
+
+
+# To check slow queries
+@main.after_app_request
+def after_request(response):
+    for query in get_recorded_queries():
+        if query.end_time >= current_app.config['SLOW_QUERY_TIME']:
+            current_app.logger.warning('Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
+                                       (query.statement, query.parameters, query.duration,
+                                        query.location))
+
+    return response

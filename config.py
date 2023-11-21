@@ -16,6 +16,8 @@ class Config:
     MAIL_SENDER = 'blog_bit Admin <alexeu.debug@gmail.com>'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_RECORD_QUERIES = True
+    SLOW_QUERY_TIME = 2
 
     # Some app constants
     POSTS_PER_PAGE = 8
